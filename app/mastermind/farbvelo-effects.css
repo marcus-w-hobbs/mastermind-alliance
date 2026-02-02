@@ -1,0 +1,254 @@
+/* Farbvelo-style visual effects for Mastermind page */
+
+/* Background gradient - match palette page implementation */
+.mastermind-has-background::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, var(--gradient-soft));
+  opacity: 0.7;
+  transform: scale(1.25);
+  transition: all 300ms ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Glow effects for messages - stronger glow like mockup */
+.mastermind-has-glow .mastermind-message-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.7;
+  border-radius: inherit;
+  box-shadow: 0 0 3rem var(--message-color), 0 0 1rem var(--message-color);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Color bleed effects between messages - subtle gradient blend */
+.mastermind-has-bleed .mastermind-message-bleed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: linear-gradient(
+    to bottom, 
+    var(--message-color) 0%, 
+    var(--message-next-color) 100%
+  );
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* Enhanced message styling - match mockup style */
+.mastermind-message-glow,
+.mastermind-message-bleed {
+  position: relative;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  /* Use Inter font to match farbvelo */
+  font-family: 'Inter', 'Inter UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Remove any inherited border radius */
+  border-radius: 0;
+}
+
+/* Force Inter font to match farbvelo exactly */
+.mastermind-inter-font,
+.mastermind-inter-font *,
+.mastermind-inter-font div,
+.mastermind-inter-font span,
+.mastermind-inter-font p,
+.mastermind-has-background,
+.mastermind-has-background *,
+.mastermind-has-background div,
+.mastermind-has-background span,
+.mastermind-has-background p {
+  font-family: var(--mastermind-font, 'Inter', 'Inter UI', -apple-system, BlinkMacSystemFont, sans-serif) !important;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Match farbvelo font rendering */
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
+
+/* Improve text readability on colored backgrounds */
+.mastermind-has-background .mastermind-message-glow,
+.mastermind-has-background .mastermind-message-bleed {
+  backdrop-filter: blur(1px);
+  /* Use the full color like in mockup, no mixing */
+}
+
+/* Enhance avatar styling to match the farbvelo aesthetic */
+.mastermind-has-glow .size-12,
+.mastermind-has-glow .size-16 {
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Subtle animations for streaming messages */
+.mastermind-message-glow[style*="streaming"] {
+  animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .mastermind-has-glow .mastermind-message-glow::after {
+    box-shadow: 0 0 1rem var(--message-color);
+  }
+  
+  .mastermind-has-bleed .mastermind-message-bleed::before {
+    opacity: 0.2;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .mastermind-has-background .fixed[style*="gradient"] {
+    opacity: 0.4;
+  }
+  
+  .mastermind-message-glow,
+  .mastermind-message-bleed {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Light mode adjustments */
+@media (prefers-color-scheme: light) {
+  .mastermind-has-background .fixed[style*="gradient"] {
+    opacity: 0.25;
+  }
+  
+  .mastermind-message-glow,
+  .mastermind-message-bleed {
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Chat Controls Farbvelo Styling */
+.mastermind-has-background .mastermind-chat-controls {
+  /* Make chat controls blend with the gradient background */
+  background: transparent !important;
+  backdrop-filter: none;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: none;
+}
+
+/* Chat input area with farbvelo effects */
+.mastermind-has-background .mastermind-chat-input {
+  background: transparent !important;
+  backdrop-filter: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+
+/* Chat buttons with glow effects */
+.mastermind-has-glow .mastermind-chat-button {
+  position: relative;
+  background: transparent;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.mastermind-has-glow .mastermind-chat-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 1rem rgba(255, 255, 255, 0.3);
+}
+
+.mastermind-has-glow .mastermind-chat-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Send button special treatment - matches other chat buttons */
+.mastermind-has-glow .mastermind-send-button {
+  background: transparent;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.mastermind-has-glow .mastermind-send-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 1rem rgba(255, 255, 255, 0.3);
+}
+
+.mastermind-has-glow .mastermind-send-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Dropdown panels with farbvelo styling */
+.mastermind-has-background .mastermind-dropdown-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.15);
+}
+
+/* Model selection display with subtle glow */
+.mastermind-has-background .mastermind-status-display {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive chat controls */
+@media (max-width: 640px) {
+  .mastermind-has-background .mastermind-chat-controls {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* Dark mode chat controls */
+@media (prefers-color-scheme: dark) {
+  .mastermind-has-background .mastermind-chat-controls {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .mastermind-has-background .mastermind-chat-input {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .mastermind-has-background .mastermind-dropdown-panel {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Light mode chat controls */
+@media (prefers-color-scheme: light) {
+  .mastermind-has-background .mastermind-chat-controls {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  .mastermind-has-background .mastermind-chat-input {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  
+  .mastermind-has-background .mastermind-dropdown-panel {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+  
+  .mastermind-has-background .mastermind-status-display {
+    color: rgba(0, 0, 0, 0.7);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+}

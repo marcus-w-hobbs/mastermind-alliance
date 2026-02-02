@@ -1,0 +1,13 @@
+
+🧪 Starting Experiment: Persona Prompt Ablation
+   Phase: persona
+   Model: claude-opus-4-1-20250805
+   Variants: 21
+   Test Prompts: 3
+   Runs per Variant: 5
+   Total Runs: 315
+
+
+📊 Experiment complete!
+   Total runs: 0
+   Summary: 2026-01-31-1907-persona-ablation-v1-summary.md
