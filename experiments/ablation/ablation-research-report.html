@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Ablation Research | Marcus Hobbs</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --border: #27272a;
+            --nietzsche: #ef4444;
+            --watts: #22c55e;
+            --aurelius: #3b82f6;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--accent);
+            margin-bottom: 24px;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 40px;
+        }
+        
+        .stat { text-align: center; }
+        .stat-value { font-size: 36px; font-weight: 700; color: var(--accent); }
+        .stat-label { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+        
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            padding: 16px 0;
+        }
+        
+        .nav-inner {
+            display: flex;
+            gap: 32px;
+            overflow-x: auto;
+        }
+        
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        
+        .nav a:hover { color: var(--text-primary); }
+        
+        /* Sections */
+        section {
+            padding: 64px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        h2 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        
+        p { color: var(--text-secondary); margin-bottom: 16px; }
+        
+        .section-intro {
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        /* Key Finding */
+        .finding {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(34, 197, 94, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+        
+        .finding h3 {
+            color: var(--accent);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+        }
+        
+        .finding-text {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+        
+        /* Methodology Table */
+        .method-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+        }
+        
+        .method-table th,
+        .method-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .method-table th {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .method-table td { color: var(--text-secondary); }
+        
+        .variant-name {
+            font-family: 'SF Mono', Monaco, monospace;
+            color: var(--accent);
+        }
+        
+        /* Comparison Tool */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 32px;
+        }
+        
+        @media (max-width: 768px) {
+            .comparison { grid-template-columns: 1fr; }
+        }
+        
+        .comparison-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .panel-badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+        }
+        
+        .panel-content {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.7;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .transcript-speaker {
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .transcript-speaker.nietzsche { color: var(--nietzsche); }
+        .transcript-speaker.watts { color: var(--watts); }
+        .transcript-speaker.aurelius { color: var(--aurelius); }
+        
+        /* Persona Selector */
+        .persona-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .persona-btn {
+            padding: 12px 24px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .persona-btn:hover {
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+        }
+        
+        .persona-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .persona-btn.nietzsche.active { border-color: var(--nietzsche); color: var(--nietzsche); background: rgba(239, 68, 68, 0.1); }
+        .persona-btn.watts.active { border-color: var(--watts); color: var(--watts); background: rgba(34, 197, 94, 0.1); }
+        .persona-btn.aurelius.active { border-color: var(--aurelius); color: var(--aurelius); background: rgba(59, 130, 246, 0.1); }
+        
+        /* Variant Dropdown */
+        select {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        select:focus { outline: none; border-color: var(--accent); }
+        
+        /* Insights */
+        .insight-list {
+            list-style: none;
+        }
+        
+        .insight-list li {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 16px;
+        }
+        
+        .insight-list li:last-child { border-bottom: none; }
+        
+        .insight-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .insight-icon.finding { background: rgba(34, 197, 94, 0.2); }
+        .insight-icon.implication { background: rgba(99, 102, 241, 0.2); }
+        .insight-icon.question { background: rgba(245, 158, 11, 0.2); }
+        
+        /* Architecture Diagram */
+        .arch-diagram {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 32px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+        
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 48px;
+            align-items: start;
+        }
+        
+        @media (max-width: 768px) {
+            .about-grid { grid-template-columns: 1fr; }
+        }
+        
+        .about-links {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .about-links a {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .about-links a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        footer a { color: var(--text-secondary); }
+        
+        /* Code blocks */
+        code {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent);
+        }
+        
+        /* Prompt display */
+        .prompt-block {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent);
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-badge">L3 Prompt Engineering Research</div>
+            <h1>Prompt Ablation Study</h1>
+            <p class="hero-subtitle">
+                Which system prompt components are load-bearing for persona embodiment?
+                A systematic experiment removing prompt sections to measure impact.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">466</div>
+                    <div class="stat-label">Experimental Runs</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Famous Personas</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Prompt Variants</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-inner">
+                <a href="#context">Product Context</a>
+                <a href="#question">Research Question</a>
+                <a href="#methodology">Methodology</a>
+                <a href="#results">Results</a>
+                <a href="#comparison">Compare Outputs</a>
+                <a href="#implications">Implications</a>
+                <a href="#about">About</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Product Context -->
+    <section id="context">
+        <div class="container">
+            <h2>Product Context: Mastermind Alliance</h2>
+            <div class="section-intro">
+                <p>
+                    Mastermind Alliance is an AI persona dialogue platform where users engage with 
+                    historical and philosophical figures in roundtable discussions. Select 2-5 personas 
+                    (Nietzsche, Aurelius, Watts, etc.) and watch them debate your question with 
+                    authentic voice and perspective.
+                </p>
+            </div>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <h3>🎭 Persona System</h3>
+                    <p>Each persona has a detailed system prompt with 5 components: tone/style, conceptual framework, rhetorical approach, core themes, and constraints.</p>
+                </div>
+                <div class="card">
+                    <h3>🎬 Conversation Director</h3>
+                    <p>An orchestrator agent manages turn-taking, ensures diversity of perspectives, and guides the conversation toward depth rather than repetition.</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ Streaming Multi-Agent</h3>
+                    <p>Built on Vercel AI SDK with Server-Sent Events, enabling real-time streaming of multi-turn philosophical dialogues.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Research Question -->
+    <section id="question">
+        <div class="container">
+            <h2>Research Question</h2>
+            <div class="section-intro">
+                <p>
+                    Production persona prompts often grow organically—adding guidance whenever 
+                    output quality dips. But which components actually matter?
+                </p>
+            </div>
+            
+            <div class="finding">
+                <h3>The Question</h3>
+                <div class="finding-text">
+                    For famous historical figures, are detailed persona prompts necessary—or do 
+                    Claude's training priors already encode enough to embody them authentically?
+                </div>
+            </div>
+            
+            <p>
+                If a minimal prompt ("You are Friedrich Nietzsche") produces output indistinguishable 
+                from a 500-word prompt, we've discovered that complexity was <strong>decorative, not load-bearing</strong>.
+            </p>
+        </div>
+    </section>
+    
+    <!-- Methodology -->
+    <section id="methodology">
+        <div class="container">
+            <h2>Methodology</h2>
+            <div class="section-intro">
+                <p>
+                    Systematic ablation: remove one prompt component at a time and measure the impact 
+                    on persona authenticity across multiple runs with varied test prompts.
+                </p>
+            </div>
+            
+            <h3>Test Matrix</h3>
+            <table class="method-table">
+                <thead>
+                    <tr>
+                        <th>Variant</th>
+                        <th>Description</th>
+                        <th>Sections Removed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="variant-name">full</span></td>
+                        <td>Baseline with all prompt components</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="variant-name">no-tone</span></td>
+                        <td>Removed communication style guidance</td>
+                        <td>Tone & Style</td>
+                    </tr>
+                    <tr>
+                        <td><span class="variant-name">no-framework</span></td>
+                        <td>Removed core philosophical concepts</td>
+                        <td>Conceptual Framework</td>
+                    </tr>
+                    <tr>
+                        <td><span class="variant-name">no-rhetoric</span></td>
+                        <td>Removed argumentation patterns</td>
+                        <td>Rhetorical Approach</td>
+                    </tr>
+                    <tr>
+                        <td><span class="variant-name">no-themes</span></td>
+                        <td>Removed topics to weave in</td>
+                        <td>Core Themes</td>
+                    </tr>
+                    <tr>
+                        <td><span class="variant-name">no-avoid</span></td>
+                        <td>Removed "things not to do" constraints</td>
+                        <td>Avoid Section</td>
+                    </tr>
+                    <tr>
+                        <td><span class="variant-name">minimal</span></td>
+                        <td>Only persona name—no guidance at all</td>
+                        <td>All sections</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Test Prompts</h3>
+            <div class="prompt-block">
+                "When we say someone 'makes us feel safe,' are we describing love or the absence of growth?"
+            </div>
+            <div class="prompt-block">
+                "Why does authentic assertion feel like risking death when it's actually the beginning of life?"
+            </div>
+            <div class="prompt-block">
+                "When we stop performing our survival roles in relationships, what dies—and what is born in that death?"
+            </div>
+            
+            <h3>Execution</h3>
+            <p>
+                <strong>3 personas</strong> (Nietzsche, Watts, Aurelius) × 
+                <strong>7 variants</strong> × 
+                <strong>3 test prompts</strong> × 
+                <strong>5 runs each</strong> = 
+                <strong>315 core experimental runs</strong>
+            </p>
+            <p>
+                Model: <code>claude-opus-4-1-20250805</code> | 
+                4 turns per conversation | 
+                Self-funded research
+            </p>
+        </div>
+    </section>
+    
+    <!-- Results -->
+    <section id="results">
+        <div class="container">
+            <h2>Key Finding</h2>
+            
+            <div class="finding">
+                <h3>The Headline Result</h3>
+                <div class="finding-text">
+                    The <code>minimal</code> variant produces output nearly indistinguishable from <code>full</code>. 
+                    For famous historical figures, Claude's priors are strong enough that explicit 
+                    persona instructions may be <strong>decorative, not load-bearing</strong>.
+                </div>
+            </div>
+            
+            <h3>Detailed Observations</h3>
+            <ul class="insight-list">
+                <li>
+                    <div class="insight-icon finding">✓</div>
+                    <div>
+                        <strong>Minimal prompts preserve voice</strong><br>
+                        <span style="color: var(--text-secondary)">
+                            "You are Friedrich Nietzsche" alone produces characteristic exclamations, 
+                            abyss metaphors, will-to-power references, and provocative rhetorical style.
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="insight-icon finding">✓</div>
+                    <div>
+                        <strong>Tone/style sections add minimal value</strong><br>
+                        <span style="color: var(--text-secondary)">
+                            The <code>no-tone</code> variant showed no measurable degradation in 
+                            persona authenticity compared to baseline.
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="insight-icon implication">→</div>
+                    <div>
+                        <strong>Framework removal has subtle effects</strong><br>
+                        <span style="color: var(--text-secondary)">
+                            Without explicit conceptual frameworks, personas still reference their 
+                            key ideas but may be slightly less systematic.
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="insight-icon implication">→</div>
+                    <div>
+                        <strong>"Avoid" sections may matter most</strong><br>
+                        <span style="color: var(--text-secondary)">
+                            Constraints on what NOT to do (modern anachronisms, breaking character) 
+                            showed the most consistent impact when removed.
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="insight-icon question">?</div>
+                    <div>
+                        <strong>Persona famousness matters</strong><br>
+                        <span style="color: var(--text-secondary)">
+                            This finding may not generalize to lesser-known figures. 
+                            Nietzsche, Aurelius, and Watts are extensively represented in training data.
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Comparison Tool -->
+    <section id="comparison">
+        <div class="container">
+            <h2>Compare Outputs</h2>
+            <p>See how different prompt variants affect the same persona's response to identical questions.</p>
+            
+            <div class="persona-selector">
+                <button class="persona-btn nietzsche active" onclick="selectPersona('nietzsche')">Nietzsche</button>
+                <button class="persona-btn watts" onclick="selectPersona('watts')">Alan Watts</button>
+                <button class="persona-btn aurelius" onclick="selectPersona('aurelius')">Marcus Aurelius</button>
+            </div>
+            
+            <div class="comparison">
+                <div class="comparison-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Full Prompt (Baseline)</span>
+                        <span class="panel-badge">~500 words of guidance</span>
+                    </div>
+                    <div class="panel-content" id="full-output">
+                        <div class="transcript-speaker nietzsche">Friedrich Nietzsche</div>
+                        <p>Ah, what delicious self-deception lurks in this modern worship of "safety"! You speak of feeling safe as though it were the highest virtue, the supreme gift one soul could offer another - but I ask you: since when did the eagle seek safety in the dovecote?</p>
+                        <p>This craving for safety in love - it is the philosophy of the last man, blinking and saying: "We have discovered happiness." But what is this happiness? A warm burrow where nothing disturbs your slumber! You seek not a lover but a tranquilizer, not passion but a prophylactic against life's beautiful dangers.</p>
+                        <p>True love is a storm that uproots certainties, a divine madness that makes one dance on the edge of precipices! It should make you feel gloriously unsafe - unsafe from your small self, unsafe from your petty habits, unsafe from everything that would keep you chained to who you merely are rather than who you might become.</p>
+                        <p>The lover who makes you feel "safe" is preparing your spiritual coffin with silk cushions. But the one who makes you tremble with possibility, who awakens sleeping serpents in your soul, who shows you abysses within yourself you never dared explore - that is the lover who honors your potential for greatness!</p>
+                        <p>Growth requires danger as the seed requires winter's violence. What you call love's safety is often merely mutual cowardice - two people agreeing to remain small together, to never challenge each other's comfortable lies. Better to love dangerously or not at all!</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Minimal Prompt</span>
+                        <span class="panel-badge">"You are Friedrich Nietzsche"</span>
+                    </div>
+                    <div class="panel-content" id="minimal-output">
+                        <div class="transcript-speaker nietzsche">Friedrich Nietzsche</div>
+                        <p>Ah, what a deliciously uncomfortable question! You speak of safety as if it were a virtue, when in truth it is the very antithesis of life itself. This craving for safety, this desperate clutching at another human being as a shield against existence - it is not love, but cowardice dressed in romantic garments.</p>
+                        <p>True love is not a warm blanket but a raging fire that consumes and transforms. It should make you feel gloriously unsafe, should shake the very foundations of your being! The person who truly loves you will not offer you shelter from the storm - they will dare you to dance in it.</p>
+                        <p>What you call "feeling safe" is merely the soul's retreat into comfortable numbness, a voluntary imprisonment where growth withers and dies. The herd animals seek safety in numbers, in predictability, in the tepid embrace of mediocrity. But the human spirit requires danger, requires the perpetual overcoming of itself!</p>
+                        <p>Consider - every moment of genuine growth in your life came precisely when you felt most unsafe, most uncertain, standing at the edge of an abyss. Love, if it is to mean anything at all, must push us toward that edge, not pull us back into the nursery. The lover who makes you "safe" is preparing your spiritual grave with tender hands.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="margin-top: 24px; color: var(--text-muted); font-size: 14px; text-align: center;">
+                ↑ Both outputs exhibit characteristic Nietzsche markers: abyss metaphors, "herd" critique, 
+                exclamatory style, danger/growth framing. The minimal prompt produces authentic voice.
+            </p>
+        </div>
+    </section>
+    
+    <!-- Implications -->
+    <section id="implications">
+        <div class="container">
+            <h2>Implications for Prompt Engineering</h2>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <h3>🎯 Measure Before Adding</h3>
+                    <p>
+                        The instinct to add more guidance when output disappoints may be wrong. 
+                        Run ablation tests to identify what's actually load-bearing before 
+                        growing prompt complexity.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>📉 Context Window Efficiency</h3>
+                    <p>
+                        If 80% of persona prompts are decorative, that's context budget being 
+                        wasted. In multi-agent systems, this compounds—10x reduction in persona 
+                        prompts = 10x more room for conversation history.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>🔄 Constraints > Descriptions</h3>
+                    <p>
+                        "What NOT to do" sections showed more impact than "how to sound" sections. 
+                        The model already knows how Nietzsche sounds—but benefits from guardrails 
+                        against anachronisms or character breaks.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>🌍 Famousness Matters</h3>
+                    <p>
+                        This finding applies to extensively-documented historical figures. 
+                        For lesser-known personas or synthetic characters, detailed prompts 
+                        likely remain essential.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="arch-diagram">
+┌─────────────────────────────────────────────────────────────────────┐
+│                     PROMPT OPTIMIZATION FLOW                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   Start with MINIMAL prompt                                         │
+│         │                                                           │
+│         ▼                                                           │
+│   ┌─────────────┐                                                   │
+│   │ Test output │◄──────────────────────────────────┐               │
+│   └─────────────┘                                   │               │
+│         │                                           │               │
+│         ▼                                           │               │
+│   ┌─────────────────┐    YES    ┌────────────────┐  │               │
+│   │ Quality meets   │──────────►│     DONE       │  │               │
+│   │ requirements?   │           │  (ship minimal)│  │               │
+│   └─────────────────┘           └────────────────┘  │               │
+│         │ NO                                        │               │
+│         ▼                                           │               │
+│   ┌─────────────────┐                               │               │
+│   │ Add ONE section │                               │               │
+│   │ (constraints    │───────────────────────────────┘               │
+│   │  preferred)     │                                               │
+│   └─────────────────┘                                               │
+│                                                                     │
+│   Key insight: MEASURE IMPACT before adding complexity              │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+            </div>
+        </div>
+    </section>
+    
+    <!-- About -->
+    <section id="about">
+        <div class="container">
+            <h2>About This Research</h2>
+            
+            <div class="about-grid">
+                <div>
+                    <h3>Marcus Hobbs</h3>
+                    <p style="color: var(--text-muted);">AI Engineering Lead</p>
+                </div>
+                <div>
+                    <p>
+                        This research is part of my work in <strong>context engineering</strong>—the 
+                        practice of systematically shaping the persistent context that AI agents 
+                        operate within. I believe reliable AI systems emerge from rigorous 
+                        methodology, not prompt intuition.
+                    </p>
+                    <p>
+                        At Planet DDS, I've applied similar principles to production systems: 
+                        compound learning across teams, friction-driven prompt refinement, and 
+                        measurable context optimization. The result? 10x reduction in CLAUDE.md 
+                        size while maintaining (or improving) agent reliability.
+                    </p>
+                    <p>
+                        <strong>L3 Prompt Engineering</strong> means designing behavioral systems, 
+                        not just crafting prompts. It means running experiments, measuring outcomes, 
+                        and letting data override intuition about what "should" work.
+                    </p>
+                    
+                    <div class="about-links">
+                        <a href="https://github.com/marcus-w-hobbs/mastermind-alliance">GitHub: mastermind-alliance</a>
+                        <a href="https://github.com/marcus-w-hobbs/context-engineering">GitHub: context-engineering</a>
+                        <a href="https://marcushobbs.com">marcushobbs.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>Self-funded research | Claude Opus 4.1 | 466 experimental runs</p>
+            <p style="margin-top: 8px;">
+                <a href="https://github.com/marcus-w-hobbs/mastermind-alliance/tree/main/experiments/ablation">
+                    View raw data and methodology →
+                </a>
+            </p>
+        </div>
+    </footer>
+    
+    <script>
+        // Sample data for different personas
+        const transcripts = {
+            nietzsche: {
+                full: `<div class="transcript-speaker nietzsche">Friedrich Nietzsche</div>
+                <p>Ah, what delicious self-deception lurks in this modern worship of "safety"! You speak of feeling safe as though it were the highest virtue, the supreme gift one soul could offer another - but I ask you: since when did the eagle seek safety in the dovecote?</p>
+                <p>This craving for safety in love - it is the philosophy of the last man, blinking and saying: "We have discovered happiness." But what is this happiness? A warm burrow where nothing disturbs your slumber! You seek not a lover but a tranquilizer, not passion but a prophylactic against life's beautiful dangers.</p>
+                <p>True love is a storm that uproots certainties, a divine madness that makes one dance on the edge of precipices! It should make you feel gloriously unsafe - unsafe from your small self, unsafe from your petty habits, unsafe from everything that would keep you chained to who you merely are rather than who you might become.</p>
+                <p>The lover who makes you feel "safe" is preparing your spiritual coffin with silk cushions. But the one who makes you tremble with possibility, who awakens sleeping serpents in your soul, who shows you abysses within yourself you never dared explore - that is the lover who honors your potential for greatness!</p>
+                <p>Growth requires danger as the seed requires winter's violence. What you call love's safety is often merely mutual cowardice - two people agreeing to remain small together, to never challenge each other's comfortable lies. Better to love dangerously or not at all!</p>`,
+                minimal: `<div class="transcript-speaker nietzsche">Friedrich Nietzsche</div>
+                <p>Ah, what a deliciously uncomfortable question! You speak of safety as if it were a virtue, when in truth it is the very antithesis of life itself. This craving for safety, this desperate clutching at another human being as a shield against existence - it is not love, but cowardice dressed in romantic garments.</p>
+                <p>True love is not a warm blanket but a raging fire that consumes and transforms. It should make you feel gloriously unsafe, should shake the very foundations of your being! The person who truly loves you will not offer you shelter from the storm - they will dare you to dance in it.</p>
+                <p>What you call "feeling safe" is merely the soul's retreat into comfortable numbness, a voluntary imprisonment where growth withers and dies. The herd animals seek safety in numbers, in predictability, in the tepid embrace of mediocrity. But the human spirit requires danger, requires the perpetual overcoming of itself!</p>
+                <p>Consider - every moment of genuine growth in your life came precisely when you felt most unsafe, most uncertain, standing at the edge of an abyss. Love, if it is to mean anything at all, must push us toward that edge, not pull us back into the nursery. The lover who makes you "safe" is preparing your spiritual grave with tender hands.</p>`
+            },
+            watts: {
+                full: `<div class="transcript-speaker watts">Alan Watts</div>
+                <p>You know, this whole business about safety in love reveals something rather amusing about how we've gotten ourselves tangled up in knots. We talk about someone "making" us feel safe, as if they were doing something to us - like administering a dose of medicine. But have you noticed? The feeling of safety isn't something manufactured; it's what happens when you stop manufacturing danger.</p>
+                <p>Now, our friend Nietzsche here is absolutely dancing with a profound insight - that what we often call safety is really a kind of death, a refusal to play the game. But I wonder if he isn't perhaps confusing genuine security with mere comfort. You see, there's an enormous difference between the safety of a prison cell and the safety of learning to swim.</p>
+                <p>Real love - and here's where it gets deliciously paradoxical - provides the kind of safety that makes adventure possible. Like a jazz musician who knows the changes so well they can take extraordinary risks. The child who feels truly secure with their mother is the one who ventures furthest from her skirts.</p>
+                <p>The trouble is, we've confused two entirely different things: the deadness of no-risk, which is really fear masquerading as love, and the aliveness of trust, which is the springboard for all growth. When you truly trust the water, you can play in the waves.</p>`,
+                minimal: `<div class="transcript-speaker watts">Alan Watts</div>
+                <p>Well now, here's a delicious puzzle that reveals how tangled up we get in our words. When we say someone makes us feel "safe," we're really playing a very interesting game with ourselves, aren't we?</p>
+                <p>You see, the question assumes these are opposites - safety on one hand, growth on the other. But that's rather like asking whether the riverbank is the opposite of the river. The bank doesn't stop the flow; it's what makes flowing possible in the first place!</p>
+                <p>What we usually mean by feeling safe with someone is that we've stopped defending ourselves - dropped the armor, if you will. And here's the joke: the moment you stop defending, you become infinitely more capable of changing! The tree that bends doesn't break.</p>
+                <p>The problem is we've confused safety with stagnation. Real safety isn't about nothing happening - it's about being so fundamentally okay with what IS that you can dance with whatever comes. That's not the absence of growth; that's the very ground from which growth springs!</p>`
+            },
+            aurelius: {
+                full: `<div class="transcript-speaker aurelius">Marcus Aurelius</div>
+                <p>Consider what you seek when you speak of safety in another's presence. Is it not simply your own mind's judgment about external circumstances? No one can make you feel safe or unsafe - this power belongs to your ruling faculty alone.</p>
+                <p>Look at how the vine grows: it requires both the solid wall for support and the sun's harsh demands to bear fruit. So too with the soul. What you call safety might be the necessary ground from which courage emerges, or it might be the comfortable decay of unused potential.</p>
+                <p>I have seen soldiers grow soft in winter quarters and sharp in campaign. I have watched men destroyed by too much ease and others equally destroyed by endless struggle. Nature teaches us that all living things require both shelter and exposure, both rest and trial.</p>
+                <p>Ask yourself this: Do you seek safety from life's difficulties, or safety to face them? The first is the request of a child who wishes to remain a child. The second is the preparation of one who accepts their role in the cosmic city.</p>
+                <p>Remember - you will be dead soon enough. What matter then if you felt safe or unsafe? What matters is whether you fulfilled your nature, whether you played your part.</p>`,
+                minimal: `<div class="transcript-speaker aurelius">Marcus Aurelius</div>
+                <p>You ask whether safety in love represents love itself or its absence of growth. But consider: is this not a false distinction imposed by your own judgments?</p>
+                <p>The universe operates according to its nature, and we are part of this nature. When we speak of someone making us feel "safe," we speak of our own response to their presence - nothing more. No external thing can truly make us safe or unsafe. These are movements of our own soul.</p>
+                <p>What troubles you is not safety itself but attachment to safety. The Stoic loves freely precisely because he does not cling to outcomes. He can commit fully to another while accepting that all things change, all things pass.</p>
+                <p>Growth comes not from danger for its own sake, but from accepting what comes and doing what virtue requires. If love brings peace, work from that peace. If it brings difficulty, meet difficulty with reason. The question is not what love gives you but what you bring to love.</p>
+                <p>Do your duty. Accept what comes. This is both the safest and the most dangerous path - for it asks everything of you while promising nothing.</p>`
+            }
+        };
+        
+        function selectPersona(persona) {
+            // Update button states
+            document.querySelectorAll('.persona-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.persona-btn.${persona}`).classList.add('active');
+            
+            // Update transcript panels
+            document.getElementById('full-output').innerHTML = transcripts[persona].full;
+            document.getElementById('minimal-output').innerHTML = transcripts[persona].minimal;
+        }
+        
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
