@@ -91,14 +91,23 @@ async function getDirectorDecision(
 
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      return {
-        nextSpeaker: parsed.selectedPersona || context.personas[0],
-        rationale: parsed.rationale || 'Director decision',
-      };
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        const selectedPersona = parsed.selectedPersona || parsed.decision?.selectedPersona;
+        if (selectedPersona && context.personas.includes(selectedPersona)) {
+          return {
+            nextSpeaker: selectedPersona,
+            rationale: parsed.rationale || parsed.decision?.rationale || 'Director decision',
+          };
+        }
+      } catch (parseError) {
+        // JSON parse failed, fall through to fallback
+      }
     }
+    // No valid JSON or persona found
+    console.warn('[cross-model] Director returned invalid response, using fallback');
   } catch (error) {
-    console.warn('[cross-model] Director error, using fallback');
+    console.warn('[cross-model] Director API error, using fallback:', (error as Error).message?.substring(0, 100));
   }
 
   // Fallback: rotate personas
