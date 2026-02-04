@@ -28,7 +28,7 @@ import { ALL_PERSONA_SECTIONS, TEST_PROMPTS } from './config';
 export interface ModelTier {
   id: ModelId;
   name: string;
-  tier: 'weak' | 'mid-old' | 'mid-new' | 'strong';
+  tier: 'weak' | 'mid' | 'mid' | 'strong';
   releaseDate: string;
   description: string;
   estimatedCostPer1kTokens: { input: number; output: number };
@@ -44,17 +44,9 @@ export const MODEL_TIERS: ModelTier[] = [
     estimatedCostPer1kTokens: { input: 0.00025, output: 0.00125 },
   },
   {
-    id: 'claude-3-7-sonnet-20250219',
-    name: 'Sonnet 3.7',
-    tier: 'mid-old',
-    releaseDate: '2025-02-19',
-    description: 'Sonnet 3.7 — mid-tier from early 2025',
-    estimatedCostPer1kTokens: { input: 0.003, output: 0.015 },
-  },
-  {
     id: 'claude-sonnet-4-5-20250929',
     name: 'Sonnet 4.5',
-    tier: 'mid-new',
+    tier: 'mid',
     releaseDate: '2025-09-29',
     description: 'Latest Sonnet — current mid-tier capability',
     estimatedCostPer1kTokens: { input: 0.003, output: 0.015 },
