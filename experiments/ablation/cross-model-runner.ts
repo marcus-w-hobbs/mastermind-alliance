@@ -69,15 +69,17 @@ async function getDirectorDecision(
   // Always use Opus for director to isolate model variance to persona responses
   const model = getModelInstance('claude-opus-4-1-20250805');
   
-  const prompt = buildDirectorPrompt(ALL_DIRECTOR_SECTIONS, {
-    availablePersonas: context.personas,
-    conversationSoFar: conversationSummary,
-    currentMetrics: {
-      responseCount: context.responseCount,
-      speakerCounts: context.speakerCounts,
-      recentSpeakers: context.recentSpeakers,
-    },
-  });
+  // Build director context in the format expected by buildDirectorPrompt
+  const directorContext = {
+    personas: context.personas,
+    responseCount: context.responseCount,
+    speakerCounts: context.speakerCounts,
+    recentSpeakers: context.recentSpeakers,
+    lastSpeaker: context.lastSpeaker,
+    recentFailedPersonas: [] as PersonaId[],
+  };
+  
+  const prompt = buildDirectorPrompt(ALL_DIRECTOR_SECTIONS, directorContext, conversationSummary);
 
   try {
     const { text } = await generateText({
