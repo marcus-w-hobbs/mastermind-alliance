@@ -34,6 +34,8 @@ export interface AblationVariant {
   enabledSections: DirectorSection[] | PersonaSection[];
   /** Target: 'director' or specific persona ID */
   target: 'director' | PersonaId;
+  /** Optional: Override the default model for cross-model experiments */
+  modelOverride?: ModelId;
 }
 
 // ============================================================================
