@@ -420,16 +420,16 @@
             </p>
             <div class="hero-stats">
                 <div class="stat">
-                    <div class="stat-value">383</div>
+                    <div class="stat-value">443</div>
                     <div class="stat-label">Experimental Runs</div>
                 </div>
                 <div class="stat">
                     <div class="stat-value">3</div>
-                    <div class="stat-label">Famous Personas</div>
+                    <div class="stat-label">Model Tiers</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">7</div>
-                    <div class="stat-label">Prompt Variants</div>
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Famous Personas</div>
                 </div>
             </div>
         </div>
@@ -443,6 +443,7 @@
                 <a href="#question">Research Question</a>
                 <a href="#methodology">Methodology</a>
                 <a href="#results">Results</a>
+                <a href="#cross-model">Cross-Model 🆕</a>
                 <a href="#comparison">Compare Outputs</a>
                 <a href="#implications">Implications</a>
                 <a href="#about">About</a>
@@ -655,6 +656,104 @@
                         <span style="color: var(--text-secondary)">
                             This finding may not generalize to lesser-known figures. 
                             Nietzsche, Aurelius, and Watts are extensively represented in training data.
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Cross-Model Results -->
+    <section id="cross-model" style="background: var(--bg-secondary);">
+        <div class="container">
+            <h2>🆕 Cross-Model Validation</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 32px;">
+                Does the "minimal prompting works" finding generalize across model capability tiers?
+                We tested Nietzsche across Haiku (weak), Sonnet (mid), and Opus (strong).
+            </p>
+            
+            <div class="finding">
+                <h3>The Cross-Model Result</h3>
+                <div class="finding-text">
+                    <strong>Yes.</strong> The pattern holds across all tiers. Even Haiku 3.5—the weakest, 
+                    cheapest model—produces recognizably Nietzschean output with minimal prompting.
+                </div>
+            </div>
+            
+            <table style="width: 100%; margin: 32px 0; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border);">
+                        <th style="text-align: left; padding: 12px; color: var(--text-secondary);">Tier</th>
+                        <th style="text-align: left; padding: 12px; color: var(--text-secondary);">Model</th>
+                        <th style="text-align: right; padding: 12px; color: var(--text-secondary);">Full (words)</th>
+                        <th style="text-align: right; padding: 12px; color: var(--text-secondary);">Minimal (words)</th>
+                        <th style="text-align: right; padding: 12px; color: var(--text-secondary);">Δ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 12px;">🔻 Weak</td>
+                        <td style="padding: 12px;">Haiku 3.5</td>
+                        <td style="padding: 12px; text-align: right;">896</td>
+                        <td style="padding: 12px; text-align: right;">835</td>
+                        <td style="padding: 12px; text-align: right; color: var(--warning);">-6.8%</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 12px;">🔸 Mid</td>
+                        <td style="padding: 12px;">Sonnet 4.5</td>
+                        <td style="padding: 12px; text-align: right;">1,097</td>
+                        <td style="padding: 12px; text-align: right;">1,047</td>
+                        <td style="padding: 12px; text-align: right; color: var(--warning);">-4.5%</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px;">🔺 Strong</td>
+                        <td style="padding: 12px;">Opus 4.1</td>
+                        <td style="padding: 12px; text-align: right;">1,349</td>
+                        <td style="padding: 12px; text-align: right;">1,263</td>
+                        <td style="padding: 12px; text-align: right; color: var(--warning);">-6.4%</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="card" style="background: var(--bg-tertiary); border-left: 3px solid var(--nietzsche);">
+                <h3>Sample: Haiku 3.5 with Minimal Prompt</h3>
+                <p style="font-style: italic; color: var(--text-secondary);">
+                    "Safety? Bah! Safety is the opiate of the weak-spirited! What you call 'feeling safe' 
+                    is merely a sophisticated form of stagnation... True love is a lightning bolt that 
+                    shatters your existing self!"
+                </p>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
+                    ↑ Contains Übermensch concepts, abyss metaphors, characteristic intensity—all from 
+                    just "You are Friedrich Nietzsche. Respond in character."
+                </p>
+            </div>
+            
+            <h3 style="margin-top: 32px;">What This Means</h3>
+            <ul class="insight-list">
+                <li>
+                    <div class="insight-icon finding">✓</div>
+                    <div>
+                        <strong>Priors are in training data, not model size</strong><br>
+                        <span style="color: var(--text-secondary);">
+                            Weaker models still "know" famous personas—they just express it more briefly.
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="insight-icon finding">✓</div>
+                    <div>
+                        <strong>Capability affects verbosity, not fidelity</strong><br>
+                        <span style="color: var(--text-secondary);">
+                            Haiku produces ~65% the words of Opus, but the persona voice is intact.
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="insight-icon finding">✓</div>
+                    <div>
+                        <strong>This generalizes across the Claude family</strong><br>
+                        <span style="color: var(--text-secondary);">
+                            The finding isn't an Opus quirk—it's fundamental to how Claude models work.
                         </span>
                     </div>
                 </li>

@@ -107,8 +107,8 @@ function shouldSkipRun(
         continue; // Different prompt, keep looking
       }
       
-      // Check if corrupt
-      if (content.includes('[Error generating response]')) {
+      // Check if corrupt (note: error text is "[Error generating response for <persona>]")
+      if (content.includes('[Error generating response')) {
         // Found matching file but it's corrupt - should re-run
         // Optionally: auto-delete corrupt file here
         console.log(`   ⚠️  Found corrupt file for run ${runNum}, will re-run: ${file}`);
@@ -254,7 +254,7 @@ CRITICAL INSTRUCTIONS:
     if (msg.role === 'user') {
       return `USER: ${msg.content}`;
     } else {
-      const speakerName = personasRegistry[msg.personaId as PersonaId]?.name || msg.personaId;
+      const speakerName = personasRegistry[msg.personaId as PersonaId]?.name || msg.personaId || 'ASSISTANT';
       return `${speakerName.toUpperCase()}: ${msg.content}`;
     }
   }).join('\n\n---\n\n');
@@ -279,7 +279,7 @@ Now respond as ${personaName}. Remember: output ONLY your response, no names or 
       system: systemPrompt,
       messages,
       temperature: 0.8,
-      maxTokens: 1024,
+      maxOutputTokens: 1024,
     });
 
     // Post-process: strip any accidental name prefixes the model might still add
