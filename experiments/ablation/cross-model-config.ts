@@ -44,11 +44,11 @@ export const MODEL_TIERS: ModelTier[] = [
     estimatedCostPer1kTokens: { input: 0.00025, output: 0.00125 },
   },
   {
-    id: 'claude-3-5-sonnet-20240620',
-    name: 'Sonnet 3.5 (Old)',
+    id: 'claude-3-7-sonnet-20250219',
+    name: 'Sonnet 3.7',
     tier: 'mid-old',
-    releaseDate: '2024-06-20',
-    description: 'Original Sonnet 3.5 — baseline mid-tier from 8 months ago',
+    releaseDate: '2025-02-19',
+    description: 'Sonnet 3.7 — mid-tier from early 2025',
     estimatedCostPer1kTokens: { input: 0.003, output: 0.015 },
   },
   {
