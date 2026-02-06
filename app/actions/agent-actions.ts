@@ -1,7 +1,9 @@
 'use server';
 
-import { createAISDKTools } from '@agentic/ai-sdk'
-import { WeatherClient } from '@agentic/weather'
+// Note: @agentic/ai-sdk requires ai@4.x but we use ai@5.x
+// Weather tools are disabled until the dependency is updated
+// import { createAISDKTools } from '@agentic/ai-sdk'
+// import { WeatherClient } from '@agentic/weather'
 import { streamText } from "ai";
 import { ModelId, getModelInstance } from "@/lib/models";
 import { PersonaId, personasRegistry } from "@/lib/personas/personas-registry";
@@ -188,15 +190,16 @@ export async function sseAgentSSE(req: NextRequest): Promise<Response> {
         }
       }
 
-      const weather = new WeatherClient();
+      // Weather tools disabled - @agentic/ai-sdk requires ai@4.x
+      // const weather = new WeatherClient();
 
       // Stream the response
       (async () => {
         try {
           const { textStream } = await streamText({
             model,
-            tools: createAISDKTools(weather),
-            toolChoice: 'auto',
+            // tools: createAISDKTools(weather),
+            // toolChoice: 'auto',
             temperature: 0,
             messages: persona.messages,
             onStepFinish: ( {text, toolCalls, toolResults, finishReason, usage} ) => {

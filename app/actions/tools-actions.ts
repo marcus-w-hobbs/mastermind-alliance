@@ -1,14 +1,15 @@
 'use server';
 
-// agentic tools
-import { createAISDKTools } from '@agentic/ai-sdk'
-import { WeatherClient } from '@agentic/weather'
-import { calculator } from '@agentic/calculator'
-import { RedditClient } from '@agentic/reddit'
+// Note: @agentic tools require ai@4.x but we use ai@5.x
+// These imports are disabled until the dependency is updated
+// import { createAISDKTools } from '@agentic/ai-sdk'
+// import { WeatherClient } from '@agentic/weather'
+// import { calculator } from '@agentic/calculator'
+// import { RedditClient } from '@agentic/reddit'
 // Note that DuckDuckGo is returning empty results
-//import { DuckDuckGoClient } from '@agentic/duck-duck-go'
+// import { DuckDuckGoClient } from '@agentic/duck-duck-go'
 // Note that BraveSearch is not properly implementing AIFunctionsProvider interface
-//import { BraveSearchClient } from '@agentic/brave-search'
+// import { BraveSearchClient } from '@agentic/brave-search'
 // Note that the RocketReach tool does not work with Next.js for some reason
 
 // for internet search let's use Tavily directly
@@ -213,10 +214,10 @@ export async function sseToolsSSE(req: NextRequest): Promise<Response> {
         }
       }
 
-      // tools
-      const weather = new WeatherClient();
-      //const duckDuckGo = new DuckDuckGoClient();
-      const reddit = new RedditClient();
+      // tools - agentic tools disabled due to ai@5.x incompatibility
+      // const weather = new WeatherClient();
+      // const duckDuckGo = new DuckDuckGoClient();
+      // const reddit = new RedditClient();
       const tavilyApiKey = process.env.TAVILY_API_KEY;
       if (!tavilyApiKey) {
         console.error('No TAVILY API key provided');
@@ -242,8 +243,9 @@ export async function sseToolsSSE(req: NextRequest): Promise<Response> {
       }
 
       // Combine tools properly - both return objects, not arrays
-      const agenticTools = createAISDKTools(weather, /*duckDuckGo,*/ reddit, calculator);
-      const allTools = { ...agenticTools, ...tavily, ...mcpTools };
+      // Agentic tools disabled due to ai@5.x incompatibility
+      // const agenticTools = createAISDKTools(weather, /*duckDuckGo,*/ reddit, calculator);
+      const allTools = { ...tavily, ...mcpTools };
 
       // Stream the response
       (async () => {

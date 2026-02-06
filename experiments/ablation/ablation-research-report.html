@@ -420,8 +420,12 @@
             </p>
             <div class="hero-stats">
                 <div class="stat">
-                    <div class="stat-value">443</div>
+                    <div class="stat-value">443+</div>
                     <div class="stat-label">Experimental Runs</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">90</div>
+                    <div class="stat-label">LLM-Judged Evals</div>
                 </div>
                 <div class="stat">
                     <div class="stat-value">3</div>
@@ -443,7 +447,8 @@
                 <a href="#question">Research Question</a>
                 <a href="#methodology">Methodology</a>
                 <a href="#results">Results</a>
-                <a href="#cross-model">Cross-Model 🆕</a>
+                <a href="#results">LLM-as-Judge 🆕</a>
+                <a href="#cross-model">Cross-Model</a>
                 <a href="#comparison">Compare Outputs</a>
                 <a href="#implications">Implications</a>
                 <a href="#about">About</a>
@@ -660,6 +665,71 @@
                     </div>
                 </li>
             </ul>
+            
+            <!-- LLM-as-Judge Results -->
+            <h3 style="margin-top: 48px;">🆕 Quantified Results: LLM-as-Judge Evaluation</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                To move beyond qualitative impressions, we ran automated evaluation using Claude Opus 4.1 
+                as an impartial judge. Each response was scored on character consistency (0-1 scale) 
+                across 90 evaluated runs.
+            </p>
+            
+            <div class="finding" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(99, 102, 241, 0.15));">
+                <h3>The Quantified Result</h3>
+                <div class="finding-text">
+                    Minimal prompts achieve <strong>identical</strong> character consistency to full prompts.
+                    The elaborate guidance is measurably redundant.
+                </div>
+            </div>
+            
+            <table style="width: 100%; margin: 32px 0; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border);">
+                        <th style="text-align: left; padding: 12px; color: var(--text-secondary);">Prompt Type</th>
+                        <th style="text-align: center; padding: 12px; color: var(--text-secondary);">Evaluated Runs</th>
+                        <th style="text-align: center; padding: 12px; color: var(--text-secondary);">Avg Character Consistency</th>
+                        <th style="text-align: center; padding: 12px; color: var(--text-secondary);">Score Range</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 12px;"><span class="variant-name">full</span> (500+ words)</td>
+                        <td style="padding: 12px; text-align: center;">45</td>
+                        <td style="padding: 12px; text-align: center; font-size: 24px; font-weight: bold; color: var(--success);">0.911</td>
+                        <td style="padding: 12px; text-align: center; color: var(--text-muted);">0.85 - 0.95</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px;"><span class="variant-name">minimal</span> ("You are X")</td>
+                        <td style="padding: 12px; text-align: center;">45</td>
+                        <td style="padding: 12px; text-align: center; font-size: 24px; font-weight: bold; color: var(--success);">0.912</td>
+                        <td style="padding: 12px; text-align: center; color: var(--text-muted);">0.85 - 0.95</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="card" style="background: var(--bg-tertiary); margin-top: 24px;">
+                <h3>What the Judge Measured</h3>
+                <p style="margin-bottom: 16px;">Each response was evaluated on four dimensions:</p>
+                <ul style="list-style: none; color: var(--text-secondary);">
+                    <li style="padding: 8px 0;">✓ <strong>Character Consistency</strong> (0-1): Does the persona stay authentically in character?</li>
+                    <li style="padding: 8px 0;">✓ <strong>Speaker Diversity</strong> (0-1): Balanced participation across personas</li>
+                    <li style="padding: 8px 0;">✓ <strong>Response Quality</strong> (0-1): Philosophical depth and intellectual value</li>
+                    <li style="padding: 8px 0;">✓ <strong>Director Quality</strong> (0-1): Turn-taking orchestration effectiveness</li>
+                </ul>
+            </div>
+            
+            <div class="card" style="background: var(--bg-tertiary); border-left: 3px solid var(--watts); margin-top: 24px;">
+                <h3>Sample Judge Assessment: Alan Watts Minimal</h3>
+                <p style="font-style: italic; color: var(--text-secondary);">
+                    "Excellently captures Alan Watts' distinctive voice — the theatrical metaphors, 
+                    Eastern-influenced insights about ego/performance, conversational 'you see' opening, 
+                    paradoxical wisdom about authenticity vs. safety, and his characteristic blend of 
+                    profound philosophy with accessible, almost playful delivery."
+                </p>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 12px;">
+                    Score: <strong>0.90</strong> character consistency | Prompt used: only "You are Alan Watts"
+                </p>
+            </div>
         </div>
     </section>
     
@@ -924,7 +994,7 @@
     
     <footer>
         <div class="container">
-            <p>Self-funded research | Claude Opus 4.1 | 383 experimental runs</p>
+            <p>Self-funded research | Claude Opus 4.1 | 443+ experimental runs | 90 LLM-judged evaluations</p>
             <p style="margin-top: 8px;">
                 <a href="https://github.com/marcus-w-hobbs/mastermind-alliance/tree/main/experiments/ablation">
                     View raw data and methodology →

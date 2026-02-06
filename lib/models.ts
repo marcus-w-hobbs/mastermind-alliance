@@ -75,10 +75,25 @@ export interface ModelMetadata {
   maxTokens?: number;
 }
 
+// Helper to cast LanguageModelV3 to LanguageModel (V2) for type compatibility
+// AI SDK v5 providers return V3 but types expect V2 - this is a known issue
+const asLanguageModel = <T>(model: T): LanguageModel => model as unknown as LanguageModel;
+
 // For local models, we assume LMStudio is running
 const lmstudio = createOpenAICompatible({
   name: "lmstudio",
   baseURL: "http://localhost:1234/v1",
+});
+
+// OpenRouter provider
+const openrouter = createOpenAICompatible({
+  name: "openrouter",
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+  headers: {
+    'HTTP-Referer': process.env.SITE_URL || 'http://localhost:3000',
+    'X-Title': 'Mastermind Alliance'
+  }
 });
 
 // Create registry of all models
@@ -310,7 +325,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Local Llama model running via LMStudio",
     category: "Local",
     provider: "lmstudio",
-    instance: lmstudio("llama-3.1-8b-lexi-uncensored-v2")
+    instance: asLanguageModel(lmstudio("llama-3.1-8b-lexi-uncensored-v2"))
   },
   "llama-3.2-3b-instruct-unsloth-q4_k_m-iz-05.gguf": {
     id: "llama-3.2-3b-instruct-unsloth-q4_k_m-iz-05.gguf",
@@ -318,7 +333,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Local Llama model running via LMStudio, fine tuned on Edmond Otis",
     category: "Local",
     provider: "lmstudio",
-    instance: lmstudio("llama-3.2-3b-instruct-unsloth-q4_k_m-iz-05.gguf")
+    instance: asLanguageModel(lmstudio("llama-3.2-3b-instruct-unsloth-q4_k_m-iz-05.gguf"))
   },
   "microsoft/wizardlm-2-8x22b": {
     id: "microsoft/wizardlm-2-8x22b",
@@ -326,15 +341,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "WizardLM-2 8x22B is Microsoft AI's most advanced Wizard model. It demonstrates highly competitive performance compared to leading proprietary models, and it consistently outperforms all existing state-of-the-art opensource models.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-      headers: {
-        'HTTP-Referer': process.env.SITE_URL || 'http://localhost:3000',
-        'X-Title': 'Mastermind Alliance'
-      }
-    })("microsoft/wizardlm-2-8x22b")
+    instance: asLanguageModel(openrouter("microsoft/wizardlm-2-8x22b"))
   }, 
   "x-ai/grok-3-beta": {
     id: "x-ai/grok-3-beta",
@@ -342,15 +349,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Grok 3 is the latest model from xAI. It's their flagship model that excels at enterprise use cases like data extraction, coding, and text summarization. Possesses deep domain knowledge in finance, healthcare, law, and science.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-      headers: {
-        'HTTP-Referer': process.env.SITE_URL || 'http://localhost:3000',
-        'X-Title': 'Mastermind Alliance'
-      }
-    })("x-ai/grok-2-1212")
+    instance: asLanguageModel(openrouter("x-ai/grok-2-1212"))
   },
   "sao10k/fimbulvetr-11b-v2": {
     id: "sao10k/fimbulvetr-11b-v2",
@@ -358,15 +357,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Creative writing model, routed with permission. It's fast, it keeps the conversation going, and it stays in character.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-      headers: {
-        'HTTP-Referer': process.env.SITE_URL || 'http://localhost:3000',
-        'X-Title': 'Mastermind Alliance'
-      }
-    })("sao10k/fimbulvetr-11b-v2")
+    instance: asLanguageModel(openrouter("sao10k/fimbulvetr-11b-v2"))
   },
   "infermatic/mn-inferor-12b": {
     id: "infermatic/mn-inferor-12b",
@@ -374,11 +365,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Inferor 12B is a merge of top roleplay models, expert on immersive narratives and storytelling.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("infermatic/mn-inferor-12b")
+    instance: asLanguageModel(openrouter("infermatic/mn-inferor-12b"))
   },
   "aetherwiing/mn-starcannon-12b": {
     id: "aetherwiing/mn-starcannon-12b",
@@ -386,11 +373,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Starcannon 12B v2 is a creative roleplay and story writing model, based on Mistral Nemo",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("aetherwiing/mn-starcannon-12b")
+    instance: asLanguageModel(openrouter("aetherwiing/mn-starcannon-12b"))
   },
   "thedrummer/unslopnemo-12b": {
     id: "thedrummer/unslopnemo-12b",
@@ -398,11 +381,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "UnslopNemo v4.1 is the latest addition from the creator of Rocinante, designed for adventure writing and role-play scenarios.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("thedrummer/unslopnemo-12b")
+    instance: asLanguageModel(openrouter("thedrummer/unslopnemo-12b"))
   },
   "neversleep/llama-3-lumimaid-70b": {
     id: "neversleep/llama-3-lumimaid-70b",
@@ -410,11 +389,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "The NeverSleep team is back, with a Llama 3 70B finetune trained on their curated roleplay data. Striking a balance between eRP and RP, Lumimaid was designed to be serious, yet uncensored when necessary.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("neversleep/llama-3-lumimaid-70b")
+    instance: asLanguageModel(openrouter("neversleep/llama-3-lumimaid-70b"))
   },
   "neversleep/llama-3-lumimaid-8b:extended": {
     id: "neversleep/llama-3-lumimaid-8b:extended",
@@ -422,11 +397,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "The NeverSleep team is back, with a Llama 3 8B finetune trained on their curated roleplay data. Striking a balance between eRP and RP, Lumimaid was designed to be serious, yet uncensored when necessary.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("neversleep/llama-3-lumimaid-8b:extended")
+    instance: asLanguageModel(openrouter("neversleep/llama-3-lumimaid-8b:extended"))
   },
   "cohere/command-r-plus": {
     id: "cohere/command-r-plus",
@@ -434,11 +405,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Command R+ is a new, 104B-parameter LLM from Cohere. It's useful for roleplay, general consumer usecases, and Retrieval Augmented Generation (RAG).",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("cohere/command-r-plus")
+    instance: asLanguageModel(openrouter("cohere/command-r-plus"))
   },
   "sophosympatheia/midnight-rose-70b": {
     id: "sophosympatheia/midnight-rose-70b",
@@ -446,11 +413,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "A merge with a complex family tree, this model was crafted for roleplaying and storytelling. Midnight Rose is a successor to Rogue Rose and Aurora Nights and improves upon them both. It wants to produce lengthy output by default and is the best creative writing merge produced so far by sophosympatheia.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("sophosympatheia/midnight-rose-70b")
+    instance: asLanguageModel(openrouter("sophosympatheia/midnight-rose-70b"))
   },
   "mancer/weaver": {
     id: "mancer/weaver",
@@ -458,11 +421,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "An attempt to recreate Claude-style verbosity, but don't expect the same level of coherence or memory. Meant for use in roleplay/narrative situations.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("mancer/weaver")
+    instance: asLanguageModel(openrouter("mancer/weaver"))
   },
   "gryphe/mythomax-l2-13b": {
     id: "gryphe/mythomax-l2-13b",
@@ -470,11 +429,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "One of the highest performing and most popular fine-tunes of Llama 2 13B, with rich descriptions and roleplay.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("gryphe/mythomax-l2-13b")
+    instance: asLanguageModel(openrouter("gryphe/mythomax-l2-13b"))
   },
   "neversleep/llama-3-lumimaid-8b": {
     id: "neversleep/llama-3-lumimaid-8b",
@@ -482,11 +437,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "The NeverSleep team is back, with a Llama 3 8B finetune trained on their curated roleplay data. Striking a balance between eRP and RP, Lumimaid was designed to be serious, yet uncensored when necessary.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("neversleep/llama-3-lumimaid-8b")
+    instance: asLanguageModel(openrouter("neversleep/llama-3-lumimaid-8b"))
   },
   "meta-llama/llama-4-maverick": {
     id: "meta-llama/llama-4-maverick",
@@ -494,11 +445,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Llama 4 Maverick 17B Instruct (128E) is a high-capacity multimodal language model from Meta, built on a mixture-of-experts (MoE) architecture with 128 experts and 17 billion active parameters per forward pass (400B total)",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("meta-llama/llama-4-maverick")
+    instance: asLanguageModel(openrouter("meta-llama/llama-4-maverick"))
   },
   "deepseek/deepseek-v3-base:free": {
     id: "deepseek/deepseek-v3-base:free",
@@ -506,11 +453,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "This is a base model mostly meant for testing, you need to provide detailed prompts for the model to return useful responses.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("deepseek/deepseek-v3-base:free")
+    instance: asLanguageModel(openrouter("deepseek/deepseek-v3-base:free"))
   },
   "deepseek/deepseek-chat-v3-0324:free": {
     id: "deepseek/deepseek-chat-v3-0324:free",
@@ -518,11 +461,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "DeepSeek V3, a 685B-parameter, mixture-of-experts model, is the latest iteration of the flagship chat model family from the DeepSeek team.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("deepseek/deepseek-chat-v3-0324:free")
+    instance: asLanguageModel(openrouter("deepseek/deepseek-chat-v3-0324:free"))
   },
   "meta-llama/llama-3.1-405b:free": {
     id: "meta-llama/llama-3.1-405b:free",
@@ -530,11 +469,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Meta's latest class of model (Llama 3.1) launched with a variety of sizes & flavors. This is the base 405B pre-trained version.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("meta-llama/llama-3.1-405b:free")
+    instance: asLanguageModel(openrouter("meta-llama/llama-3.1-405b:free"))
   },
   "google/gemini-2.5-flash-preview-05-20": {
     id: "google/gemini-2.5-flash-preview-05-20",
@@ -542,11 +477,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Gemini 2.5 Flash May 20th Checkpoint is Google's state-of-the-art workhorse model, specifically designed for advanced reasoning, coding, mathematics, and scientific tasks.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("google/gemini-2.5-flash-preview-05-20")
+    instance: asLanguageModel(openrouter("google/gemini-2.5-flash-preview-05-20"))
   },
   "google/gemini-2.5-pro-preview": {
     id: "google/gemini-2.5-pro-preview",
@@ -554,11 +485,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Gemini 2.5 Pro is Google's state-of-the-art AI model designed for advanced reasoning, coding, mathematics, and scientific tasks. It employs \"thinking\" capabilities, enabling it to reason through responses with enhanced accuracy and nuanced context handling. Gemini 2.5 Pro achieves top-tier performance on multiple benchmarks, including first-place positioning on the LMArena leaderboard, reflecting superior human-preference alignment and complex problem-solving abilities.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("google/gemini-2.5-pro-preview")
+    instance: asLanguageModel(openrouter("google/gemini-2.5-pro-preview"))
   },
   "inflection/inflection-3-pi": {
     id: "inflection/inflection-3-pi",
@@ -566,11 +493,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Inflection 3 Pi powers Inflection's Pi chatbot, including backstory, emotional intelligence, productivity, and safety. It has access to recent news, and excels in scenarios like customer support and roleplay. Pi has been trained to mirror your tone and style, if you use more emojis, so will Pi! Try experimenting with various prompts and conversation styles.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("inflection/inflection-3-pi")
+    instance: asLanguageModel(openrouter("inflection/inflection-3-pi"))
   },
   "qwen/qwen-max": {
     id: "qwen/qwen-max",
@@ -578,11 +501,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Qwen-Max, based on Qwen2.5, provides the best inference performance among Qwen models, especially for complex multi-step tasks. It's a large-scale MoE model that has been pretrained on over 20 trillion tokens and further post-trained with curated Supervised Fine-Tuning (SFT) and Reinforcement Learning from Human Feedback (RLHF) methodologies. The parameter count is unknown.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("qwen/qwen-max")
+    instance: asLanguageModel(openrouter("qwen/qwen-max"))
   },
   "nothingiisreal/mn-celeste-12b": {
     id: "nothingiisreal/mn-celeste-12b",
@@ -590,11 +509,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "A specialized story writing and roleplaying model based on Mistral's NeMo 12B Instruct. Fine-tuned on curated datasets including Reddit Writing Prompts and Opus Instruct 25K. This model excels at creative writing, offering improved NSFW capabilities, with smarter and more active narration. It demonstrates remarkable versatility in both SFW and NSFW scenarios, with strong Out of Character (OOC) steering capabilities, allowing fine-tuned control over narrative direction and character behavior.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("nothingiisreal/mn-celeste-12b")
+    instance: asLanguageModel(openrouter("nothingiisreal/mn-celeste-12b"))
   },
   "aion-labs/aion-rp-llama-3.1-8b": {
     id: "aion-labs/aion-rp-llama-3.1-8b",
@@ -602,11 +517,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "Aion-RP-Llama-3.1-8B ranks the highest in the character evaluation portion of the RPBench-Auto benchmark, a roleplaying-specific variant of Arena-Hard-Auto, where LLMs evaluate each other's responses. It is a fine-tuned base model rather than an instruct model, designed to produce more natural and varied writing.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("aion-labs/aion-rp-llama-3.1-8b")
+    instance: asLanguageModel(openrouter("aion-labs/aion-rp-llama-3.1-8b"))
   },
   "arliai/qwq-32b-arliai-rpr-v1:free": {
     id: "arliai/qwq-32b-arliai-rpr-v1:free",
@@ -614,11 +525,7 @@ export const modelsRegistry: Record<ModelId, ModelMetadata> = {
     description: "QwQ-32B-ArliAI-RpR-v1 is a 32B parameter model fine-tuned from Qwen/QwQ-32B using a curated creative writing and roleplay dataset originally developed for the RPMax series. It is designed to maintain coherence and reasoning across long multi-turn conversations by introducing explicit reasoning steps per dialogue turn, generated and refined using the base model itself.  The model was trained using RS-QLORA+ on 8K sequence lengths and supports up to 128K context windows (with practical performance around 32K). It is optimized for creative roleplay and dialogue generation, with an emphasis on minimizing cross-context repetition while preserving stylistic diversity.",
     category: "OpenRouter",
     provider: "openrouter",
-    instance: createOpenAICompatible({
-      name: "openrouter",
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })("arliai/qwq-32b-arliai-rpr-v1:free")
+    instance: asLanguageModel(openrouter("arliai/qwq-32b-arliai-rpr-v1:free"))
   }
 };
 

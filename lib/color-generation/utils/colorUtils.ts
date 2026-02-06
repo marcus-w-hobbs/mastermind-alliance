@@ -1,8 +1,27 @@
 /* eslint-disable */
 // @ts-nocheck
 import chroma from 'chroma-js';
-import { hsluvToHex, hpluvToHex } from 'hsluv';
+import { Hsluv } from 'hsluv';
 import type { ColorMode } from '../types';
+
+// Helper functions to convert HSLuv/HPLuv to hex using the class-based API
+function hsluvToHex(h: number, s: number, l: number): string {
+  const conv = new Hsluv();
+  conv.hsluv_h = h;
+  conv.hsluv_s = s;
+  conv.hsluv_l = l;
+  conv.hsluvToHex();
+  return conv.hex;
+}
+
+function hpluvToHex(h: number, s: number, l: number): string {
+  const conv = new Hsluv();
+  conv.hpluv_h = h;
+  conv.hpluv_p = s;
+  conv.hpluv_l = l;
+  conv.hpluvToHex();
+  return conv.hex;
+}
 
 /**
  * Converts coordinates to hex color based on the specified color mode
@@ -11,9 +30,9 @@ import type { ColorMode } from '../types';
 export function coordsToHex(angle: number, val1: number, val2: number, mode: ColorMode = 'hsluv'): string {
   try {
     if (mode === 'hsluv') {
-      return hsluvToHex([angle, val1, val2]);
+      return hsluvToHex(angle, val1, val2);
     } else if (mode === 'hpluv') {
-      return hpluvToHex([angle, val1, val2]);
+      return hpluvToHex(angle, val1, val2);
     } else if (mode === 'oklch') {
       return chroma(val2 / 100 * 0.999, val1 / 100 * 0.322, angle, 'oklch').hex();
     } else if (mode === 'hcl') {
@@ -27,7 +46,7 @@ export function coordsToHex(angle: number, val1: number, val2: number, mode: Col
     }
     
     // Fallback to HSLuv
-    return hsluvToHex([angle, val1, val2]);
+    return hsluvToHex(angle, val1, val2);
   } catch (error) {
     console.warn(`Error converting color coordinates (${angle}, ${val1}, ${val2}) in mode ${mode}:`, error);
     // Return a safe fallback color

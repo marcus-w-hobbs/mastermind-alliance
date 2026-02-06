@@ -12,7 +12,13 @@
 'use server';
 
 import { Mem0Message } from '@/types/mem0-types';
-import { currentUser } from '@clerk/nextjs/server';
+
+// Stub for currentUser since there's no auth layer
+// This repo has no authentication - users provide their own API keys
+async function currentUser(): Promise<{ username: string | null } | null> {
+  // Return null to indicate no authenticated user
+  return null;
+}
 
 /**
  * Helper function to append authenticated user's name to userId

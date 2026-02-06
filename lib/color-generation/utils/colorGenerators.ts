@@ -1,7 +1,8 @@
 /* eslint-disable */
 // @ts-nocheck
 import randomColor from 'randomcolor';
-import { SimplexNoise } from 'simplex-noise';
+import { createNoise2D } from 'simplex-noise';
+import seedrandom from 'seedrandom';
 import { coordsToHex, shuffleArray, sortPaletteByLightness } from './colorUtils';
 import type { ColorGenerationParams, ColorGeneratorFunction } from '../types';
 
@@ -114,15 +115,16 @@ function generateLegacy({ amount, parts, minHueDiffAngle, colorMode, random }: C
 /**
  * Simplex Noise generator - exact copy from FarbVelo lib/generate-random-colors.js lines 64-73
  */
-function generateSimplexNoise({ 
-  parts, 
-  minHueDiffAngle, 
-  colorMode, 
-  currentSeed, 
-  random 
+function generateSimplexNoise({
+  parts,
+  minHueDiffAngle,
+  colorMode,
+  currentSeed,
+  random
 }: ColorGenerationParams): string[] {
   const colors: string[] = [];
-  const simplex = new SimplexNoise(currentSeed);
+  const seededRandom = seedrandom(currentSeed);
+  const noise2D = createNoise2D(seededRandom);
   const minLight = random() * 30 + 50; // 50-80
   const maxLight = Math.min(minLight + 40, 95);
   const minSat = random() * 60 + 20; // 20-80
@@ -130,7 +132,7 @@ function generateSimplexNoise({
   const satRamp = maxSat - minSat;
   
   for (let i = 0; i < parts + 1; i++) {
-    const hue = simplex.noise2D(0.5, (i / parts) * (3 * (minHueDiffAngle / 360))) * 360;
+    const hue = noise2D(0.5, (i / parts) * (3 * (minHueDiffAngle / 360))) * 360;
     const saturation = minSat + (i / parts) * satRamp;
     const lightness = i ? 55 + (i / parts) * (maxLight - minLight) : random() * 30 + 10;
     
